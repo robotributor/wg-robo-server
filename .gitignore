@@ -1,0 +1,5 @@
+# Local test keys
+wg-test/
+
+# JetBrains IDE
+.idea/
