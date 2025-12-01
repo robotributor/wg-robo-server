@@ -21,7 +21,7 @@ docker run -d \
   --cap-add=NET_RAW \
   -p 51820:51820/udp \
   -e WG_PEERS='<peer-public-key>:10.0.0.2/32' \
-  your-image-name
+  robotributor/wg-robo-server:latest
 ```
 
 ## Environment Variables
@@ -92,7 +92,7 @@ version: '3.8'
 
 services:
   wireguard:
-    image: your-wireguard-image:latest
+    image: robotributor/wg-robo-server:latest
     container_name: wireguard-vpn
     cap_add:
       - NET_ADMIN
@@ -255,7 +255,7 @@ docker exec wireguard wg show wg0 peers
 ```bash
 git clone <repository-url>
 cd wireguard-docker
-docker build -t my-wireguard:latest .
+docker build -t my-wg-robo-server:latest .
 ```
 
 
