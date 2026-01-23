@@ -35,11 +35,11 @@ docker run -d \
 
 ### Networking
 
-- **WG_INTERFACE** (default: `eth0`) - Network interface for masquerading
-- **WG_ALLOWED_SOURCES** (default: `none`) - Networks to masquerade towards. Can have multiple values, coma separated
-- **WG_ENABLE_IP_FORWARD** (default: `true`) - Enable IPv4 forwarding
+- **WG_INTERFACE** (default: `eth0`) - Network interface for masquerading - typically the network interface used by the container to connect to the local server side network
+- **WG_ALLOWED_SOURCES** (default: `none`) - Networks to masquerade - typically the same VPN server internal network that is used in WG_ADDRESS.
+- **WG_ENABLE_IP_FORWARD** (default: `true`) - Enable IPv4 forwarding. This is required if you expect the VPN server to do any sort of routing or masquerade.
 - **WG_ENABLE_MASQUERADE** (default: `false`) - Enable NAT masquerading
-- **WG_PORT_FORWARDS** (default: empty) - Port forwarding rules
+- **WG_PORT_FORWARDS** (default: empty) - Port forwarding rules. Leave empty to disable. See example usage below.
 
 ## Peer Configuration Format
 
@@ -181,10 +181,9 @@ Server_public_key: NhScYc6sRvo7rjLTsBYRDA3p4V3EaVFjN2kfeVaRan0=
 10. [Optional] Write a DNS server - for example 9.9.9.9 - make sure to add it to the Allowed IPs list for the DNS traffic to be routed via the VPN.
 11. Add an IP address - For example 10.0.0.2 with Netmask 255.255.255.255. This is the same IP address that you passed to the server within the WG_PEERS variiable.
 12. Gateway is not needed and will default to 0.0.0.0
-13. On the tab "WireGuard Interface" fill up MTU to 1400
+13. On the tab "WireGuard Interface" set MTU to 1400 - base routing will work without it, but there may be all kinds of issues, including TLS handshake timeouts if you don't specify it.
 
 Now you can connect to your Wireguard VPN.
-
 
 ## Security Considerations
 
@@ -210,7 +209,8 @@ Now you can connect to your Wireguard VPN.
 
 - Alpine Linux base image minimizes installed packages
 - Only essential runtime dependencies are included
-- Regular security updates recommended
+- All packages are scanned for known vulnerabilities before publishing
+
 
 ## Troubleshooting
 
@@ -248,7 +248,7 @@ docker exec wireguard wg show wg0 peers
 
 **Port forwarding doesn't work**: Ensure the internal service is reachable at the specified IP address.
 
-**No internet for VPN clients**: Enable masquerading with `WG_ENABLE_MASQUERADE=true` and verify IP forwarding is enabled.
+**No internet for VPN clients**: Enable masquerading with `WG_ENABLE_MASQUERADE=true` and verify IP forwarding is enabled. `WG_ALLOWED_SOURCES` should be set to a network that includes the client IP address.
 
 ## Building from Source
 
